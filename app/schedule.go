@@ -11,22 +11,22 @@ type Scheduled struct {
 	EveryMinute []func(app *App)
 	EveryHour   []func(app *App)
 	EveryDay    []func(app *App)
+	EveryWeek   []func(app *App)
 	EveryMonth  []func(app *App)
 	EveryYear   []func(app *App)
 }
 
 type Task struct {
 	Interval time.Duration
-	Funcs []func(app *App)
-
+	Funcs    []func(app *App)
 }
 
-func RunScheduleTasks(app *App, poolSize, stop <-chan struct{}){
+func RunScheduleTasks(app *App, poolSize int, stop <-chan struct{}) {
 
-	for _, f := range app.ScheduledTasks.EveryReboot{
+	for _, f := range app.ScheduledTasks.EveryReboot {
 		f(app)
 	}
-	tasks := []Task {
+	tasks := []Task{
 		{Interval: time.Second, Funcs: app.ScheduledTasks.EverySecond},
 		{Interval: time.Minute, Funcs: app.ScheduledTasks.EveryMinute},
 		{Interval: time.Hour, Funcs: app.ScheduledTasks.EveryHour},
@@ -45,7 +45,7 @@ func RunScheduleTasks(app *App, poolSize, stop <-chan struct{}){
 		runners[i] = runner
 		wg.Add(i)
 
-		go func (task Task, runner chan bool)  {
+		go func(task Task, runner chan bool) {
 			defer wg.Done()
 			ticker := time.NewTicker(task.Interval)
 			defer ticker.Stop()
@@ -53,19 +53,19 @@ func RunScheduleTasks(app *App, poolSize, stop <-chan struct{}){
 			for {
 				select {
 				case <-ticker.C:
-					for _, f:= range task.Funcs{
+					for _, f := range task.Funcs {
 						runner <- true
-						go func (f func(app *App))  {
-							defer func () {<-runner}()
+						go func(f func(app *App)) {
+							defer func() { <-runner }()
 							f(app)
 						}(f)
+					}
 				case <-stop:
 					return
-					}
 				}
 			}
 
-		}(task runner)
+		}(task, runner)
 	}
 	wg.Wait()
 
