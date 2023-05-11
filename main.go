@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"os"
-	"time"
+
+	//"time"
 
 	"github.com/ivangago06/app"
 	"github.com/ivangago06/config"
@@ -24,8 +25,8 @@ func main() {
 		}
 	}
 
-	file, err := os.OpenFile("logs/"+time.Now().Format("2006-01-02")+".log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	log.SetOutput(file)
+	//file, err := os.OpenFile("logs/"+time.Now().Format("2006-01-02")+".log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	//log.SetOutput(file)
 
 	// conectar a BD
 

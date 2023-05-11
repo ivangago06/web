@@ -3,6 +3,8 @@ package models
 import (
 	"log"
 	"net/http"
+
+	//"os/user"
 	"time"
 
 	"github.com/ivangago06/app"
@@ -26,14 +28,15 @@ const (
 	insertUser           = "INSERT INTO " + userTable + " (" + userColumnsNoId + ") VALUES ($1, $2, $3, $4) RETURNING \"Id\""
 )
 
-func GetCurrentUser(app *app.App, r http.Request) (User, error) {
-
+func GetCurrentUser(app *app.App, r *http.Request) (User, error) {
 	cookie, err := r.Cookie("session")
 
 	if err != nil {
-		log.Println("No se encontró la sección")
+		log.Println("No se encontró la sesión.")
 		return User{}, err
-
 	}
 
+	session, err := GetSessionByAuthToken(app, cookie.Value)
+
+	return GetUserById(app, session)
 }

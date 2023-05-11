@@ -11,6 +11,7 @@ type Configuration struct {
 	Db struct {
 		Ip          string `json:"DbIp"`
 		Port        string `json:"DbPort"`
+		Name        string `json:"DbName"`
 		User        string `json:"DbUser"`
 		Password    string `json:"DbPassword"`
 		AutoMigrate bool   `json:"DbMigrate"`

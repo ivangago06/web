@@ -1,3 +1,3 @@
-module github.com/ivangago06
+module web
 
 go 1.20
